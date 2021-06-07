@@ -21,3 +21,4 @@ Route::post('/logout', function (Request $request) {
     Auth::logout();
     return response('');
 });
+Route::apiResource('students', 'StudentController');

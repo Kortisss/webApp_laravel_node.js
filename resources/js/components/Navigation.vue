@@ -1,14 +1,36 @@
-<>
 <template>
     <div>
         Navigation
         <br/>
-        <router-link to="{ name: 'home' }">Home</router-link>|
-        <router-link to="{ name: 'login' }">Login</router-link>|
-        <router-link to="{ name: 'dashboard' }">Dashboard</router-link>
+        <router-link :to="{ name: 'home' }">Home </router-link>
+        <router-link v-if="!isLogged" :to="{ name: 'login' }">Login </router-link>
+        <a v-if="isLogged" @click.prevent="logout" href>Logout </a>
+        <router-link v-if="isLogged" :to="{ name: 'dashboard' }">Dashboard </router-link>
     </div>
 </template>
 <script>
-    export default {};
+import Error from "./Error.vue";
+export default {
+    components: { Error },
+    inject:["auth", "eventBus"],
+    data(){
+        return { isLogged: null };
+    },
+    created() {
+        this.isLogged = localStorage.getItem("isLogged");
+        this.eventBus.$on("isLogged", value => {
+            this.isLogged = value;
+        });
+    },
+    beforeDestroy(){
+        this.eventBus.$off("isLogged");
+    },
+    methods:{
+        async logout(){
+            try{
+                await this.auth.logout();
+            } catch (err){ }
+        }
+    }
+};
 </script>
-</>
